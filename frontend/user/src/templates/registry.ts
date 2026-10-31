@@ -4,13 +4,14 @@ import { useAppStore } from '../stores/app'
  * 店面模板系统（站长全局切换 · 渐进并行迁移）
  *
  * - 当前激活模板优先级：本地预览覆盖(?template=) > 站点全局配置(storefront_template) > 上次访问时的模板 > 默认 classic
- * - classic 沿用现有 ../views/*，vault 落在 ./vault/*；vault 缺页时自动回退 classic，
- *   因此可以一页一页地把新设计搬进 vault，旧站全程可用。
+ * - classic 沿用现有 ../views/*，vault 落在 ./vault/*，ink 落在 ./ink/*；
+ *   模板缺页时自动回退 classic，因此可以一页一页地把新设计搬进新模板，旧站全程可用。
+ * - ink 目前只覆盖 Home / Products 两页，其余页面仍回落 classic。
  */
 
-export type StorefrontTemplate = 'classic' | 'vault'
+export type StorefrontTemplate = 'classic' | 'vault' | 'ink'
 
-export const STOREFRONT_TEMPLATES: StorefrontTemplate[] = ['classic', 'vault']
+export const STOREFRONT_TEMPLATES: StorefrontTemplate[] = ['classic', 'vault', 'ink']
 export const DEFAULT_TEMPLATE: StorefrontTemplate = 'classic'
 
 const OVERRIDE_KEY = 'dj-storefront-template'
@@ -87,19 +88,25 @@ export const getActiveTemplate = (): StorefrontTemplate => {
     return rememberedTemplate ?? DEFAULT_TEMPLATE
 }
 
-// vault 模板页面（按需动态加载）。key 形如 './vault/Home.vue'
+// 各模板页面（按需动态加载）。key 形如 './vault/Home.vue' / './ink/Home.vue'
 const vaultViews = import.meta.glob('./vault/**/*.vue')
+const inkViews = import.meta.glob('./ink/**/*.vue')
 
 type ViewLoader = () => Promise<unknown>
 
 /**
- * 路由 view 解析器：vault 模板下若存在同名页面则用 vault 版，否则回退传入的 classic loader。
+ * 路由 view 解析器：当前模板下若存在同名页面则用该模板版，否则回退传入的 classic loader。
  * 用法：`component: templateView('Home', () => import('../views/Home.vue'))`
  */
 export const templateView = (name: string, classicLoader: ViewLoader): ViewLoader => {
     return () => {
-        if (getActiveTemplate() === 'vault') {
+        const active = getActiveTemplate()
+        if (active === 'vault') {
             const loader = vaultViews[`./vault/${name}.vue`]
+            if (loader) return loader()
+        }
+        if (active === 'ink') {
+            const loader = inkViews[`./ink/${name}.vue`]
             if (loader) return loader()
         }
         return classicLoader()
