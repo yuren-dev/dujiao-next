@@ -1,0 +1,302 @@
+/* =========================================================================
+   ink 模板设计令牌 —— teamorouter 首页设计语言的通用化提炼（非 1:1 复制）
+   方向：浅暖底 · 墨色为主 · 直角 · 细线 · 几乎无阴影 · 虚线分隔
+   作用域：全部选择器限定在 .ink-scope / body.ink-tokens 下，不影响
+           classic / vault 模板。亮色 only：不跟随全局 .dark 翻转，
+           因为 .ink-scope 是更近的祖先，--ui-* 在作用域内以此处为准。
+   字体：不下载任何商业字体，只用系统 fallback 链
+         Inter + PingFang SC / Microsoft YaHei / Noto Sans SC。
+   品牌资产：本文件不含任何 teamorouter 品牌图、文案与价格数据，
+             渐变只用纯 CSS 色值。
+   ========================================================================= */
+
+/* ---------- Tokens ---------- */
+.ink-scope,
+body.ink-tokens {
+  --ink-stage: #fffefb;
+  --ink-warm: #faf9f4;
+  --ink: #14110f;
+  --ink-nav: #222222;
+  --ink-2: #545454;
+  --ink-3: #757575;
+  --ink-border: color-mix(in srgb, #14110f 12%, transparent);
+  --ink-border-hover: color-mix(in srgb, #14110f 16%, transparent);
+  --ink-border-strong: #525252;
+  --ink-amber: #f97316;
+  --ink-amber-deep: #c2410c;
+  --ink-amber-soft: rgba(249, 115, 22, 0.12);
+  --ink-link: #2463eb;
+  --ink-success: #1bb673;
+  --ink-success-soft: rgba(27, 182, 115, 0.12);
+  --ink-warning: #d97706;
+  --ink-warning-soft: rgba(217, 119, 6, 0.12);
+  --ink-danger: #dc2626;
+  --ink-danger-soft: rgba(220, 38, 38, 0.1);
+
+  --ink-font-sans: Inter, system-ui, -apple-system, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --ink-font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --ink-edge: clamp(20px, 4vw, 56px);
+  --ink-sec-pt: clamp(84px, 13vh, 176px);
+  --ink-sec-pb: clamp(84px, 13vh, 176px);
+  --ink-corner: 0px;
+  --ink-corner-hero: 4px;
+  --ink-dot-rule: linear-gradient(90deg, color-mix(in srgb, #14110f 24%, transparent) 0 4px, transparent 4px);
+  --ink-dot-rule-size: 8px 1px;
+  --ink-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ink-shadow-pop: 0 12px 30px rgba(20, 17, 15, 0.14);
+  --ink-shadow-dialog: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* shadcn / Tailwind --ui-* 在 ink 作用域内的映射：主色 = 墨色，不是蓝 */
+  --ui-bg-page: var(--ink-stage);
+  --ui-bg-elevated: #ffffff;
+  --ui-bg-soft: var(--ink-warm);
+  --ui-bg-muted: #f0efea;
+  --ui-bg-overlay: rgba(255, 254, 251, 0.8);
+  --ui-bg-overlay-strong: rgba(255, 254, 251, 0.92);
+  --ui-text-primary: var(--ink);
+  --ui-text-secondary: var(--ink-2);
+  --ui-text-muted: var(--ink-3);
+  --ui-text-on-accent: var(--ink-stage);
+  --ui-border: var(--ink-border);
+  --ui-border-strong: var(--ink-border-strong);
+  --ui-accent: var(--ink-nav);
+  --ui-accent-hover: var(--ink);
+  --ui-accent-soft: rgba(20, 17, 15, 0.08);
+  --ui-accent-warm: var(--ink-amber);
+  --ui-accent-warm-hover: var(--ink-amber-deep);
+  --ui-accent-warm-soft: var(--ink-amber-soft);
+  --ui-success: var(--ink-success);
+  --ui-success-soft: var(--ink-success-soft);
+  --ui-warning: var(--ink-warning);
+  --ui-warning-soft: var(--ink-warning-soft);
+  --ui-danger: var(--ink-danger);
+  --ui-danger-soft: var(--ink-danger-soft);
+  --ui-info: var(--ink-link);
+  --ui-info-soft: rgba(36, 99, 235, 0.1);
+  --ui-focus-ring: rgba(20, 17, 15, 0.2);
+  --ui-radius-sm: var(--ink-corner);
+  --ui-radius-md: var(--ink-corner);
+  --ui-radius-lg: var(--ink-corner-hero);
+  --ui-radius-xl: var(--ink-corner-hero);
+  --ui-shadow-soft: var(--ink-shadow-pop);
+  --ui-shadow-card: var(--ink-shadow-pop);
+}
+
+/* ---------- 外壳布局（只作用于 .ink-scope，不改 body 布局） ---------- */
+.ink-scope {
+  background: var(--ink-stage);
+  color: var(--ink);
+  font-family: var(--ink-font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- 组件类（原创写法，只借用规范里的数值） ---------- */
+@layer base {
+  .ink-scope h1,
+  .ink-scope h2,
+  .ink-scope h3,
+  .ink-scope h4 {
+    font-family: var(--ink-font-sans);
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ink);
+  }
+  .ink-scope p { margin: 0; }
+  .ink-scope a { color: inherit; text-decoration: none; }
+  .ink-scope button { font-family: inherit; cursor: pointer; }
+  .ink-scope :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .ink-scope ::selection { background: var(--ink-amber-soft); color: var(--ink); }
+}
+
+.ink-scope .ink-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--ink-sec-pt) var(--ink-edge) var(--ink-sec-pb);
+}
+.ink-scope .ink-section-head {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto clamp(34px, 5vh, 56px);
+}
+.ink-scope .ink-section-title {
+  font-weight: 700;
+  font-size: clamp(1.9rem, 3.8vw, 2.7rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.ink-scope .ink-section-sub {
+  margin: 16px auto 0;
+  max-width: 860px;
+  font-weight: 500;
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--ink) 84%, transparent);
+}
+.ink-scope .ink-dot-rule {
+  height: 1px;
+  background: var(--ink-dot-rule) 0 100% / var(--ink-dot-rule-size) repeat-x;
+}
+
+/* 按钮：高 40px，直角；主按钮墨底 + knob 可选变体 */
+.ink-scope .ink-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--ink-corner);
+  font-size: 15.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity 0.2s var(--ink-ease), background 0.2s var(--ink-ease), border-color 0.2s var(--ink-ease);
+}
+.ink-scope .ink-btn-primary {
+  position: relative;
+  background: var(--ink-nav);
+  color: var(--ink-stage);
+  border: 1px solid var(--ink-nav);
+}
+.ink-scope .ink-btn-primary:hover { background: var(--ink); border-color: var(--ink); }
+.ink-scope .ink-btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink-nav);
+}
+.ink-scope .ink-btn-ghost:hover { background: color-mix(in srgb, var(--ink-nav) 6%, transparent); }
+.ink-scope .ink-btn-lg { height: 48px; }
+.ink-scope .ink-btn-knob { padding-left: 46px; }
+.ink-scope .ink-btn-knob .ink-knob {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  bottom: 2px;
+  width: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink-stage);
+  color: var(--ink-nav);
+  transition: left 0.34s var(--ink-ease);
+}
+.ink-scope .ink-btn-knob:hover .ink-knob { left: calc(100% - 38px); }
+@media (max-width: 640px) {
+  .ink-scope .ink-btn-knob { padding-left: 18px; }
+  .ink-scope .ink-btn-knob .ink-knob { display: none; }
+}
+
+/* 卡片：直角、细边、悬停只变边色、不加阴影 */
+.ink-scope .ink-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px 16px;
+  border-radius: var(--ink-corner);
+  border: 1px solid var(--ink-border);
+  background: color-mix(in srgb, #fff 55%, transparent);
+  transition: border-color 0.22s var(--ink-ease), transform 0.22s var(--ink-ease);
+}
+.ink-scope .ink-card:hover { border-color: var(--ink-border-hover); }
+.ink-scope .ink-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--ink-corner);
+  background: var(--ink-nav);
+  color: var(--ink-stage);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 价格表：数字等宽、表头下沿虚线、单元格 22px × 20px */
+.ink-scope .ink-price-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.ink-scope .ink-price-table th,
+.ink-scope .ink-price-table td {
+  padding: 22px 20px;
+  text-align: left;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ink-scope .ink-price-table th:first-child,
+.ink-scope .ink-price-table td:first-child { padding-left: 6px; }
+.ink-scope .ink-price-table thead th {
+  font-weight: 500;
+  font-size: 14.5px;
+  color: color-mix(in srgb, var(--ink) 48%, transparent);
+  padding-top: 8px;
+  padding-bottom: 16px;
+}
+.ink-scope .ink-price-table thead tr {
+  background: var(--ink-dot-rule) 0 100% / var(--ink-dot-rule-size) repeat-x;
+}
+.ink-scope .ink-price-table tbody td { font-size: 17px; }
+
+/* FAQ：grid 0fr → 1fr 展开，箭头旋转 */
+.ink-scope .ink-faq-list { border-top: 1px solid var(--ink-border); }
+.ink-scope .ink-faq-item {
+  display: grid;
+  grid-template-rows: auto 0fr;
+  border-bottom: 1px solid var(--ink-border);
+  transition: grid-template-rows 0.28s var(--ink-ease);
+}
+.ink-scope .ink-faq-item.is-open { grid-template-rows: auto 1fr; }
+.ink-scope .ink-faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 2px;
+  background: none;
+  border: 0;
+  text-align: left;
+  font-weight: 600;
+  font-size: 16.5px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.ink-scope .ink-faq-q svg { flex: none; transition: transform 0.24s var(--ink-ease); }
+.ink-scope .ink-faq-item.is-open .ink-faq-q svg { transform: rotate(180deg); }
+.ink-scope .ink-faq-a { overflow: hidden; }
+.ink-scope .ink-faq-a p {
+  padding: 0 2px 20px;
+  max-width: 680px;
+  font-size: 15px;
+  line-height: 1.68;
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+}
+
+/* 入场 stagger：600ms、位移 12px、间隔 90ms */
+.ink-scope .ink-stagger-line {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 600ms var(--ink-ease), transform 600ms var(--ink-ease);
+}
+.ink-scope .ink-stagger.is-shown .ink-stagger-line { opacity: 1; transform: none; }
+.ink-scope .ink-stagger-line--2 { transition-delay: 90ms; }
+.ink-scope .ink-stagger-line--3 { transition-delay: 180ms; }
+.ink-scope .ink-stagger-line--4 { transition-delay: 270ms; }
+
+@media (max-width: 900px) {
+  .ink-scope { --ink-sec-pt: clamp(48px, 8vh, 72px); --ink-sec-pb: clamp(48px, 8vh, 72px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ink-scope *,
+  .ink-scope *::before,
+  .ink-scope *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
